@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diccionario sone xeme</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f5f5f5;
+    color: #222;
+  }
+  h1 {
+    font-family: 'Noto Sans', sans-serif;
+    color: #0000CC;
+    font-size: 1.8em;
+    margin-bottom: 4px;
+  }
+  h1 span { color: #555; font-size: 0.6em; }
+  .controles {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  select {
+    padding: 10px;
+    border: 2px solid #0000CC;
+    border-radius: 6px;
+    font-size: 1em;
+    background: white;
+    color: #222;
+  }
+  input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #0000CC;
+    border-radius: 6px;
+    font-size: 1em;
+    min-width: 200px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #0055ff;
+    box-shadow: 0 0 0 3px rgba(0,0,204,0.15);
+  }
+  .resultado {
+    background: white;
+    border-left: 5px solid #0000CC;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .palabra-sx {
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #0000CC;
+  }
+  .etiquetas {
+    margin: 4px 0 10px 0;
+    font-size: 0.85em;
+    color: #666;
+  }
+  .etiqueta {
+    display: inline-block;
+    background: #eef;
+    border: 1px solid #ccf;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-right: 5px;
+  }
+  .fila {
+    display: flex;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95em;
+  }
+  .fila:last-child { border-bottom: none; }
+  .fila-label {
+    color: #888;
+    min-width: 110px;
+    font-size: 0.9em;
+  }
+  .fila-valor { color: #222; }
+  .fila-valor.sx {
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: bold;
+    color: #0000CC;
+  }
+  .traduccion-visitante {
+    background: #f0f4ff;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-weight: bold;
+    color: #0000CC;
+  }
+  #estado {
+    color: #888;
+    font-style: italic;
+    margin: 10px 0;
+    font-size: 0.9em;
+  }
+  #resultados { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<h1>sone xeme <span>— diccionario</span></h1>
+
+<div class="controles">
+  <select id="idioma">
+    <option value="sx">sx (sone xeme)</option>
+    <option value="spa">Español</option>
+    <option value="eng">English</option>
+    <option value="deu">Deutsch</option>
+    <option value="fra">Français</option>
+    <option value="cmn">中文</option>
+    <option value="jpn">日本語</option>
+    <option value="arb">العربية</option>
+    <option value="rus">Русский</option>
+    <option value="ben">বাংলা</option>
+    <option value="hin">हिन्दी</option>
+    <option value="swa">Kiswahili</option>
+  </select>
+  <input type="text" id="busqueda" placeholder="Escribí una palabra..." autocomplete="off">
+</div>
+
+<div id="estado"></div>
+<div id="resultados"></div>
+
+<script>
+const IDIOMAS = {
+  sx:  "sone xeme",
+  spa: "Español",
+  eng: "English",
+  deu: "Deutsch",
+  fra: "Français",
+  cmn: "中文",
+  jpn: "日本語",
+  arb: "العربية",
+  rus: "Русский",
+  ben: "বাংলা",
+  hin: "हिन्दी",
+  swa: "Kiswahili"
+};
+
+const NIVELES = {
+  A0: "A0 — básico", A1: "A1", A2: "A2",
+  B1: "B1", B2: "B2", C1: "C1", C2: "C2"
+};
+
+const ORIGENES = {
+  fax: "artificial", es: "español", en: "inglés",
+  ja: "japonés", zh: "chino", ar: "árabe",
+  ru: "ruso", de: "alemán", fr: "francés",
+  hi: "hindi", sw: "suajili", bn: "bengalí", ch: "chino"
+};
+
+let diccionario = [];
+
+// Cargamos el JSON
+fetch("sx_diccionario.json")
+  .then(r => r.json())
+  .then(data => {
+    diccionario = data;
+    document.getElementById("estado").textContent =
+      diccionario.length + " palabras cargadas.";
+    setTimeout(() => {
+      document.getElementById("estado").textContent = "";
+    }, 3000);
+  })
+  .catch(() => {
+    document.getElementById("estado").textContent =
+      "Error: no se pudo cargar sx_diccionario.json. Verificá que esté en la misma carpeta.";
+  });
+
+// Buscador en tiempo real
+document.getElementById("busqueda").addEventListener("input", buscar);
+document.getElementById("idioma").addEventListener("change", buscar);
+
+function buscar() {
+  const termino = document.getElementById("busqueda").value.trim().toLowerCase();
+  const idioma  = document.getElementById("idioma").value;
+  const estado  = document.getElementById("estado");
+  const contenedor = document.getElementById("resultados");
+
+  if (termino.length < 2) {
+    contenedor.innerHTML = "";
+    estado.textContent = "";
+    return;
+  }
+
+  const resultados = diccionario.filter(entrada => {
+    const campo = entrada[idioma];
+    if (!campo) return false;
+    return campo.toString().toLowerCase().includes(termino);
+  });
+
+  if (resultados.length === 0) {
+    estado.textContent = "No se encontraron resultados para «" + termino + "» en " + IDIOMAS[idioma] + ".";
+    contenedor.innerHTML = "";
+    return;
+  }
+
+  estado.textContent = resultados.length + " resultado" + (resultados.length > 1 ? "s" : "") + ".";
+  contenedor.innerHTML = resultados.slice(0, 30).map(e => fichaHTML(e, idioma)).join("");
+}
+
+function fichaHTML(e, idiomaSeleccionado) {
+  const origen  = ORIGENES[e.origen] || e.origen || "—";
+  const nivel   = NIVELES[e.nivel]   || e.nivel  || "—";
+
+  // Traducción en el idioma del visitante
+  let tradVisitante = "";
+  if (idiomaSeleccionado !== "sx" && e[idiomaSeleccionado]) {
+    tradVisitante = `
+      <div class="fila">
+        <span class="fila-label">${IDIOMAS[idiomaSeleccionado]}</span>
+        <span class="fila-valor traduccion-visitante">${e[idiomaSeleccionado]}</span>
+      </div>`;
+  }
+
+  // Campos opcionales
+  const filas = [];
+  if (e.lexema)      filas.push(fila("Lexema",       `<span class='sx'>${e.lexema}</span>`));
+  if (e.sufijo)      filas.push(fila("Sufijo",        `<span class='sx'>-${e.sufijo}</span>`));
+  if (e.significado) filas.push(fila("Significado",   e.significado));
+  if (e.spa && idiomaSeleccionado !== "spa") filas.push(fila("Español", e.spa));
+  if (e.eng && idiomaSeleccionado !== "eng") filas.push(fila("English", e.eng));
+
+  return `
+    <div class="resultado">
+      <div class="palabra-sx">${e.sx}</div>
+      <div class="etiquetas">
+        <span class="etiqueta">${e.clasgra || ""}</span>
+        <span class="etiqueta">${nivel}</span>
+        <span class="etiqueta">origen: ${origen}</span>
+      </div>
+      ${tradVisitante}
+      ${filas.join("")}
+    </div>`;
+}
+
+function fila(label, valor) {
+  return `<div class="fila">
+    <span class="fila-label">${label}</span>
+    <span class="fila-valor">${valor}</span>
+  </div>`;
+}
+</script>
+</body>
+</html>
