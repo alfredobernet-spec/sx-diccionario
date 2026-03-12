@@ -3,130 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diccionario sone xeme</title>
+<title>kotobofe sone xeme</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 16px 20px;
     background: #f5f5f5;
     color: #222;
   }
-  h1 {
-    font-family: 'Noto Sans', sans-serif;
-    color: #0000CC;
-    font-size: 1.8em;
-    margin-bottom: 4px;
-  }
-  h1 span { color: #555; font-size: 0.6em; }
-  .controles {
+  .barra-top {
     display: flex;
-    gap: 10px;
-    margin: 20px 0;
+    align-items: center;
+    gap: 12px;
     flex-wrap: wrap;
+    margin-bottom: 16px;
   }
+  .titulo {
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  .titulo .sx { color: #0000CC; }
+  .titulo .gris { color: #777; font-weight: normal; font-size: 0.85em; }
   select {
-    padding: 10px;
+    padding: 7px 10px;
     border: 2px solid #0000CC;
     border-radius: 6px;
-    font-size: 1em;
+    font-size: 0.95em;
     background: white;
     color: #222;
   }
   input {
     flex: 1;
-    padding: 10px;
+    padding: 7px 10px;
     border: 2px solid #0000CC;
     border-radius: 6px;
-    font-size: 1em;
-    min-width: 200px;
+    font-size: 0.95em;
+    min-width: 180px;
   }
   input:focus, select:focus {
     outline: none;
     border-color: #0055ff;
     box-shadow: 0 0 0 3px rgba(0,0,204,0.15);
   }
-  .resultado {
-    background: white;
-    border-left: 5px solid #0000CC;
-    border-radius: 6px;
-    padding: 16px 20px;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  }
-  .palabra-sx {
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 1.6em;
-    font-weight: bold;
-    color: #0000CC;
-  }
-  .etiquetas {
-    margin: 4px 0 10px 0;
-    font-size: 0.85em;
-    color: #666;
-  }
-  .etiqueta {
-    display: inline-block;
-    background: #eef;
-    border: 1px solid #ccf;
-    border-radius: 4px;
-    padding: 2px 8px;
-    margin-right: 5px;
-  }
-  .fila {
-    display: flex;
-    gap: 10px;
-    padding: 5px 0;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 0.95em;
-  }
-  .fila:last-child { border-bottom: none; }
-  .fila-label {
-    color: #888;
-    min-width: 110px;
-    font-size: 0.9em;
-  }
-  .fila-valor { color: #222; }
-  .fila-valor.sx {
-    font-family: 'Noto Sans', sans-serif;
-    font-weight: bold;
-    color: #0000CC;
-  }
-  .traduccion-visitante {
-    background: #f0f4ff;
-    border-radius: 4px;
-    padding: 3px 8px;
-    font-weight: bold;
-    color: #0000CC;
-  }
   #estado {
     color: #888;
     font-style: italic;
-    margin: 10px 0;
-    font-size: 0.9em;
+    font-size: 0.85em;
+    margin-bottom: 10px;
   }
-  #resultados { margin-top: 10px; }
+  .tabla-resultados {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    margin-bottom: 8px;
+    table-layout: fixed;
+  }
+  .tabla-resultados th {
+    background: #e8e8e8;
+    color: #444;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid #ccc;
+  }
+  .tabla-resultados td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.88em;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tabla-resultados tr:last-child td { border-bottom: none; }
+  .tabla-resultados tr:hover td { background: #f4f7ff; }
+  .col-sx      { width: 9%; }
+  .col-lexema  { width: 8%; }
+  .col-sufijo  { width: 6%; }
+  .col-clasgra { width: 7%; }
+  .col-nivel   { width: 5%; }
+  .col-idioma  { width: 10%; }
+  .col-sig     { width: 37%; }
+  .col-origen  { width: 8%; }
+  .sx {
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: bold;
+    color: #0000CC;
+  }
+  .etiqueta {
+    display: inline-block;
+    background: #f0f0f0;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 0.82em;
+    color: #555;
+  }
+  .titulo-familia {
+    font-size: 0.82em;
+    color: #999;
+    margin: 14px 0 5px 2px;
+    font-style: italic;
+  }
+  .bloque-entrada { margin-bottom: 20px; }
+  .btn-traducir {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 0 3px;
+    position: relative;
+    vertical-align: middle;
+  }
+ .btn-traducir:hover::after {
+    content: attr(data-tooltip);
+    position: fixed;
+    background: #333;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.78em;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  .rtl { direction: rtl; text-align: right; }
+  .rtl .tabla-resultados th,
+  .rtl .tabla-resultados td { text-align: right; }
 </style>
 </head>
 <body>
 
-<h1>sone xeme <span>— diccionario</span></h1>
-
-<div class="controles">
+<div class="barra-top">
+  <div class="titulo">
+    <span class="sx">diccionario sx</span>
+    <span class="gris"> — </span>
+    <span class="sx">sone xeme</span>
+  </div>
   <select id="idioma">
-    <option value="sx">sx (sone xeme)</option>
+    <option value="sx">sx — sone xeme</option>
+    <option value="cmn">中文 — chino</option>
+    <option value="jpn">日本語 — japonés</option>
+    <option value="arb">العربية — árabe</option>
+    <option value="rus">Русский — ruso</option>
+    <option value="ben">বাংলা — bengalí</option>
+    <option value="hin">हिन्दी — hindi</option>
+    <option value="swa">Kiswahili — suajili</option>
+    <option value="deu">Deutsch — alemán</option>
+    <option value="eng">English — inglés</option>
+    <option value="fra">Français — francés</option>
     <option value="spa">Español</option>
-    <option value="eng">English</option>
-    <option value="deu">Deutsch</option>
-    <option value="fra">Français</option>
-    <option value="cmn">中文</option>
-    <option value="jpn">日本語</option>
-    <option value="arb">العربية</option>
-    <option value="rus">Русский</option>
-    <option value="ben">বাংলা</option>
-    <option value="hin">हिन्दी</option>
-    <option value="swa">Kiswahili</option>
   </select>
   <input type="text" id="busqueda" placeholder="Escribí una palabra..." autocomplete="off">
 </div>
@@ -135,124 +169,283 @@
 <div id="resultados"></div>
 
 <script>
-const IDIOMAS = {
-  sx:  "sone xeme",
-  spa: "Español",
-  eng: "English",
-  deu: "Deutsch",
-  fra: "Français",
-  cmn: "中文",
-  jpn: "日本語",
-  arb: "العربية",
-  rus: "Русский",
-  ben: "বাংলা",
-  hin: "हिन्दी",
-  swa: "Kiswahili"
-};
-
-const NIVELES = {
-  A0: "A0 — básico", A1: "A1", A2: "A2",
-  B1: "B1", B2: "B2", C1: "C1", C2: "C2"
+const GT_LANG = {
+  sx:"es", cmn:"zh-CN", jpn:"ja", arb:"ar", rus:"ru",
+  ben:"bn", hin:"hi", swa:"sw", deu:"de", eng:"en",
+  fra:"fr", spa:"es"
 };
 
 const ORIGENES = {
-  fax: "artificial", es: "español", en: "inglés",
-  ja: "japonés", zh: "chino", ar: "árabe",
-  ru: "ruso", de: "alemán", fr: "francés",
-  hi: "hindi", sw: "suajili", bn: "bengalí", ch: "chino"
+  fax:"artificial", es:"español", en:"inglés", ja:"japonés",
+  zh:"chino", ar:"árabe", ru:"ruso", de:"alemán", fr:"francés",
+  hi:"hindi", sw:"suajili", bn:"bengalí", ch:"chino"
+};
+
+const UI = {
+  sx:  {
+    placeholder: "Ingresá una palabra en sx...",
+    cargadas: "palabras cargadas", resultado: "resultado",
+    resultados: "resultados", noResultados: "No se encontraron resultados para",
+    en: "en", colSx: "sx", colLexema: "lexema", colSufijo: "sufijo",
+    colClasgra: "cl. gram.", colNivel: "nivel", colIdioma: "español",
+    colSig: "significado", colOrigen: "origen",
+    familia: "familia completa del lexema", palabras: "palabras",
+    traducir: "traducir al español", rtl: false
+  },
+  cmn: {
+    placeholder: "输入一个词...",
+    cargadas: "词已加载", resultado: "结果",
+    resultados: "结果", noResultados: "未找到结果",
+    en: "", colSx: "词", colLexema: "词根", colSufijo: "后缀",
+    colClasgra: "词类", colNivel: "级别", colIdioma: "中文",
+    colSig: "含义", colOrigen: "来源",
+    familia: "词族", palabras: "个词",
+    traducir: "翻译成中文", rtl: false
+  },
+  jpn: {
+    placeholder: "単語を入力...",
+    cargadas: "語が読み込まれました", resultado: "結果",
+    resultados: "結果", noResultados: "結果が見つかりません",
+    en: "", colSx: "語", colLexema: "語根", colSufijo: "接尾辞",
+    colClasgra: "品詞", colNivel: "レベル", colIdioma: "日本語",
+    colSig: "意味", colOrigen: "起源",
+    familia: "語族", palabras: "語",
+    traducir: "日本語に翻訳", rtl: false
+  },
+  arb: {
+    placeholder: "أدخل كلمة...",
+    cargadas: "كلمة محملة", resultado: "نتيجة",
+    resultados: "نتائج", noResultados: "لم يتم العثور على نتائج",
+    en: "في", colSx: "كلمة", colLexema: "جذر", colSufijo: "لاحقة",
+    colClasgra: "فئة نحوية", colNivel: "مستوى", colIdioma: "العربية",
+    colSig: "معنى", colOrigen: "أصل",
+    familia: "عائلة الجذر", palabras: "كلمة",
+    traducir: "ترجمة إلى العربية", rtl: true
+  },
+  rus: {
+    placeholder: "Введите слово...",
+    cargadas: "слов загружено", resultado: "результат",
+    resultados: "результатов", noResultados: "Результаты не найдены",
+    en: "в", colSx: "слово", colLexema: "лексема", colSufijo: "суффикс",
+    colClasgra: "часть речи", colNivel: "уровень", colIdioma: "Русский",
+    colSig: "значение", colOrigen: "происхождение",
+    familia: "семья лексемы", palabras: "слов",
+    traducir: "перевести на русский", rtl: false
+  },
+  ben: {
+    placeholder: "একটি শব্দ লিখুন...",
+    cargadas: "শব্দ লোড হয়েছে", resultado: "ফলাফল",
+    resultados: "ফলাফল", noResultados: "কোনো ফলাফল পাওয়া যায়নি",
+    en: "", colSx: "শব্দ", colLexema: "লেক্সিম", colSufijo: "প্রত্যয়",
+    colClasgra: "ব্যাকরণ শ্রেণি", colNivel: "স্তর", colIdioma: "বাংলা",
+    colSig: "অর্থ", colOrigen: "উৎস",
+    familia: "লেক্সিম পরিবার", palabras: "শব্দ",
+    traducir: "বাংলায় অনুবাদ করুন", rtl: false
+  },
+  hin: {
+    placeholder: "एक शब्द लिखें...",
+    cargadas: "शब्द लोड हुए", resultado: "परिणाम",
+    resultados: "परिणाम", noResultados: "कोई परिणाम नहीं मिला",
+    en: "", colSx: "शब्द", colLexema: "लेक्सेम", colSufijo: "प्रत्यय",
+    colClasgra: "व्याकरण वर्ग", colNivel: "स्तर", colIdioma: "हिन्दी",
+    colSig: "अर्थ", colOrigen: "मूल",
+    familia: "लेक्सेम परिवार", palabras: "शब्द",
+    traducir: "हिन्दी में अनुवाद करें", rtl: false
+  },
+  swa: {
+    placeholder: "Andika neno...",
+    cargadas: "maneno yamepakiwa", resultado: "tokeo",
+    resultados: "matokeo", noResultados: "Hakuna matokeo",
+    en: "katika", colSx: "neno", colLexema: "mzizi", colSufijo: "kiambishi",
+    colClasgra: "aina ya neno", colNivel: "kiwango", colIdioma: "Kiswahili",
+    colSig: "maana", colOrigen: "asili",
+    familia: "familia ya mzizi", palabras: "maneno",
+    traducir: "tafsiri kwa Kiswahili", rtl: false
+  },
+  deu: {
+    placeholder: "Ein Wort eingeben...",
+    cargadas: "Wörter geladen", resultado: "Ergebnis",
+    resultados: "Ergebnisse", noResultados: "Keine Ergebnisse gefunden",
+    en: "auf", colSx: "Wort", colLexema: "Lexem", colSufijo: "Suffix",
+    colClasgra: "Wortart", colNivel: "Niveau", colIdioma: "Deutsch",
+    colSig: "Bedeutung", colOrigen: "Herkunft",
+    familia: "Lexemfamilie", palabras: "Wörter",
+    traducir: "ins Deutsche übersetzen", rtl: false
+  },
+  eng: {
+    placeholder: "Enter a word...",
+    cargadas: "words loaded", resultado: "result",
+    resultados: "results", noResultados: "No results found for",
+    en: "in", colSx: "word", colLexema: "lexeme", colSufijo: "suffix",
+    colClasgra: "word class", colNivel: "level", colIdioma: "English",
+    colSig: "meaning", colOrigen: "origin",
+    familia: "lexeme family", palabras: "words",
+    traducir: "translate to English", rtl: false
+  },
+  fra: {
+    placeholder: "Entrez un mot...",
+    cargadas: "mots chargés", resultado: "résultat",
+    resultados: "résultats", noResultados: "Aucun résultat pour",
+    en: "en", colSx: "mot", colLexema: "lexème", colSufijo: "suffixe",
+    colClasgra: "classe gram.", colNivel: "niveau", colIdioma: "Français",
+    colSig: "signification", colOrigen: "origine",
+    familia: "famille du lexème", palabras: "mots",
+    traducir: "traduire en français", rtl: false
+  },
+  spa: {
+    placeholder: "Escribí una palabra...",
+    cargadas: "palabras cargadas", resultado: "resultado",
+    resultados: "resultados", noResultados: "No se encontraron resultados para",
+    en: "en", colSx: "sx", colLexema: "lexema", colSufijo: "sufijo",
+    colClasgra: "cl. gram.", colNivel: "nivel", colIdioma: "español",
+    colSig: "significado", colOrigen: "origen",
+    familia: "familia completa del lexema", palabras: "palabras",
+    traducir: "traducir al español", rtl: false
+  }
 };
 
 let diccionario = [];
 
-// Cargamos el JSON
 fetch("sx_diccionario.json")
   .then(r => r.json())
   .then(data => {
     diccionario = data;
+    const ui = UI[document.getElementById("idioma").value] || UI.spa;
     document.getElementById("estado").textContent =
-      diccionario.length + " palabras cargadas.";
-    setTimeout(() => {
-      document.getElementById("estado").textContent = "";
-    }, 3000);
+      diccionario.length + " " + ui.cargadas;
+    setTimeout(() => document.getElementById("estado").textContent = "", 3000);
   })
   .catch(() => {
     document.getElementById("estado").textContent =
-      "Error: no se pudo cargar sx_diccionario.json. Verificá que esté en la misma carpeta.";
+      "Error: no se pudo cargar sx_diccionario.json.";
   });
 
-// Buscador en tiempo real
 document.getElementById("busqueda").addEventListener("input", buscar);
-document.getElementById("idioma").addEventListener("change", buscar);
+document.getElementById("idioma").addEventListener("change", () => {
+  actualizarUI();
+  buscar();
+});
+
+function actualizarUI() {
+  const idioma = document.getElementById("idioma").value;
+  const ui = UI[idioma] || UI.spa;
+  document.getElementById("busqueda").placeholder = ui.placeholder;
+  document.body.classList.toggle("rtl", ui.rtl);
+}
+
+function primeraPalabra(texto) {
+  if (!texto) return "";
+  return texto.split(/,|\/|\s{2,}/)[0].trim();
+}
 
 function buscar() {
-  const termino = document.getElementById("busqueda").value.trim().toLowerCase();
-  const idioma  = document.getElementById("idioma").value;
-  const estado  = document.getElementById("estado");
+  const termino    = document.getElementById("busqueda").value.trim().toLowerCase();
+  const idioma     = document.getElementById("idioma").value;
+  const ui         = UI[idioma] || UI.spa;
+  const estado     = document.getElementById("estado");
   const contenedor = document.getElementById("resultados");
 
-  if (termino.length < 2) {
+  if (termino.length < 1) {
     contenedor.innerHTML = "";
     estado.textContent = "";
     return;
   }
 
-  const resultados = diccionario.filter(entrada => {
-    const campo = entrada[idioma];
+  const resultados = diccionario.filter(e => {
+    const campo = e[idioma];
     if (!campo) return false;
-    return campo.toString().toLowerCase().includes(termino);
+    const fragmentos = campo.toString().toLowerCase().split(/,|\/|\s{2,}/);
+    return fragmentos.some(f => f.trim() === termino);
   });
 
   if (resultados.length === 0) {
-    estado.textContent = "No se encontraron resultados para «" + termino + "» en " + IDIOMAS[idioma] + ".";
+    estado.textContent = ui.noResultados + " «" + termino + "».";
     contenedor.innerHTML = "";
     return;
   }
 
-  estado.textContent = resultados.length + " resultado" + (resultados.length > 1 ? "s" : "") + ".";
-  contenedor.innerHTML = resultados.slice(0, 30).map(e => fichaHTML(e, idioma)).join("");
+  const n = resultados.length;
+  estado.textContent = n + " " + (n === 1 ? ui.resultado : ui.resultados) + ".";
+
+  const lexemasMostrados = new Set();
+  const bloques = [];
+  resultados.slice(0, 20).forEach(e => {
+    if (!lexemasMostrados.has(e.lexema)) {
+      lexemasMostrados.add(e.lexema);
+      const familia = diccionario.filter(x => x.lexema === e.lexema);
+      bloques.push(bloqueEntrada(e, familia, idioma, ui));
+    }
+  });
+
+  contenedor.innerHTML = bloques.join("");
 }
 
-function fichaHTML(e, idiomaSeleccionado) {
-  const origen  = ORIGENES[e.origen] || e.origen || "—";
-  const nivel   = NIVELES[e.nivel]   || e.nivel  || "—";
-
-  // Traducción en el idioma del visitante
-  let tradVisitante = "";
-  if (idiomaSeleccionado !== "sx" && e[idiomaSeleccionado]) {
-    tradVisitante = `
-      <div class="fila">
-        <span class="fila-label">${IDIOMAS[idiomaSeleccionado]}</span>
-        <span class="fila-valor traduccion-visitante">${e[idiomaSeleccionado]}</span>
-      </div>`;
-  }
-
-  // Campos opcionales
-  const filas = [];
-  if (e.lexema)      filas.push(fila("Lexema",       `<span class='sx'>${e.lexema}</span>`));
-  if (e.sufijo)      filas.push(fila("Sufijo",        `<span class='sx'>-${e.sufijo}</span>`));
-  if (e.significado) filas.push(fila("Significado",   e.significado));
-  if (e.spa && idiomaSeleccionado !== "spa") filas.push(fila("Español", e.spa));
-  if (e.eng && idiomaSeleccionado !== "eng") filas.push(fila("English", e.eng));
-
-  return `
-    <div class="resultado">
-      <div class="palabra-sx">${e.sx}</div>
-      <div class="etiquetas">
-        <span class="etiqueta">${e.clasgra || ""}</span>
-        <span class="etiqueta">${nivel}</span>
-        <span class="etiqueta">origen: ${origen}</span>
-      </div>
-      ${tradVisitante}
-      ${filas.join("")}
-    </div>`;
+function encabezadoTabla(ui) {
+  return `<colgroup>
+    <col class="col-sx"><col class="col-lexema"><col class="col-sufijo">
+    <col class="col-clasgra"><col class="col-nivel"><col class="col-idioma">
+    <col class="col-sig"><col class="col-origen">
+  </colgroup>
+  <thead><tr>
+    <th>${ui.colSx}</th>
+    <th>${ui.colLexema}</th>
+    <th>${ui.colSufijo}</th>
+    <th>${ui.colClasgra}</th>
+    <th>${ui.colNivel}</th>
+    <th>${ui.colIdioma}</th>
+    <th>${ui.colSig}</th>
+    <th>${ui.colOrigen}</th>
+  </tr></thead>`;
 }
 
-function fila(label, valor) {
-  return `<div class="fila">
-    <span class="fila-label">${label}</span>
-    <span class="fila-valor">${valor}</span>
+function filaTabla(e, idioma, ui) {
+  const tradIdioma = idioma !== "sx" && idioma !== "spa"
+    ? (e[idioma] || "—")
+    : primeraPalabra(e.spa) || "—";
+
+  const gtLang = GT_LANG[idioma] || "en";
+  const tooltip = ui.traducir;
+  const urlGT = "https://translate.google.com/?sl=es&tl=" + gtLang +
+    "&text=" + encodeURIComponent(e.significado || "") + "&op=translate";
+
+  const btnTraducir = e.significado
+    ? ` <button class="btn-traducir"
+        onclick="window.open('${urlGT}','_blank')"
+        data-tooltip="${tooltip}">🌐</button>`
+    : "";
+
+  return `<tr>
+    <td><span class="sx">${e.sx || "—"}</span></td>
+    <td><span class="sx">${e.lexema || "—"}</span></td>
+    <td><span class="sx">${e.sufijo ? "-" + e.sufijo : "—"}</span></td>
+    <td><span class="etiqueta">${e.clasgra || "—"}</span></td>
+    <td><span class="etiqueta">${e.nivel || "—"}</span></td>
+    <td>${tradIdioma}</td>
+    <td>${e.significado || "—"}${btnTraducir}</td>
+    <td>${ORIGENES[e.origen] || e.origen || "—"}</td>
+  </tr>`;
+}
+
+function bloqueEntrada(encontrada, familia, idioma, ui) {
+  const esFamilia = familia.length > 1;
+  const tituloFamilia = esFamilia
+    ? `<div class="titulo-familia">${ui.familia} <span class="sx">${encontrada.lexema}</span> — ${familia.length} ${ui.palabras}</div>`
+    : "";
+
+  const filas = esFamilia
+    ? familia.map(e => filaTabla(e, idioma, ui)).join("")
+    : filaTabla(encontrada, idioma, ui);
+
+  return `<div class="bloque-entrada">
+    <table class="tabla-resultados">
+      ${encabezadoTabla(ui)}
+      <tbody>${filas}</tbody>
+    </table>
+    ${tituloFamilia}
   </div>`;
 }
+
+actualizarUI();
 </script>
 </body>
 </html>
